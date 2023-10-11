@@ -1,3 +1,4 @@
+use core::pin::pin;
 use std::{fmt::Debug, sync::Arc, time::Duration};
 
 use futures::{Future, Stream, StreamExt, TryStreamExt};
@@ -46,9 +47,9 @@ async fn create_controller(
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let client = Client::try_default().await?;
-    let mut controller = create_controller(client).await?;
-    // let mut controller = Box::pin(create_controller(client).await?);
-    while let Some(item) = controller.try_next().await? {
+    // let mut controller = create_controller(client).await?;
+    let mut controller = pin!(create_controller(client).await?);
+    while let Some(_item) = controller.try_next().await? {
     }
     Ok(())
 }
